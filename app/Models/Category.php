@@ -1,15 +1,17 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
-    // relasi one to many ke product
+    // protected $table = 'category';
+
     public $fillable = ['name', 'slug'];
+
+    // membuat relasi one to many ke model product
     public function product()
     {
-        return $this->hasMany(product::class);
+        return $this->hasMany(Product::class);
     }
 }

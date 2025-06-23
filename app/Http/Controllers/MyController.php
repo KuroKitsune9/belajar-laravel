@@ -1,18 +1,17 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
 class MyController extends Controller
 {
-
     private $arr = [
-        ['id' => 1, 'nama' => 'faza', 'kelas' => 'XI RPL 1'],
-        ['id' => 2, 'nama' => 'Ubed', 'kelas' => 'XI RPL 2'],
-        ['id' => 3, 'nama' => 'Cemen', 'kelas' => 'XI RPL 3'],
+        ['id' => 1, 'nama' => 'faza', 'kelas' => 'xii rpl 1'],
+        ['id' => 2, 'nama' => 'Ubed', 'kelas' => 'xii rpl 2'],
+        ['id' => 3, 'nama' => 'Cemen', 'kelas' => 'xii rpl 3'],
     ];
-    public function index() // memberikan daftar nama
+
+    public function index() //memberikan daftar data
     {
         $siswa = session('siswa_data', $this->arr);
         return view('siswa.index', ['siswa' => $siswa]);
@@ -20,11 +19,17 @@ class MyController extends Controller
 
     public function show($id)
     {
-        $siswa = collect($this->arr)->firstWhere('id', $id);
-        // dd($siswa); // untuk cek data
-        if (!$siswa) {
+        // ambil data siswa dari session
+        $data = session('siswa_data', $this->arr);
+
+        // cari data berdasarkan id
+        $siswa = collect($data)->firstWhere('id', $id);
+
+        //jika data tidak ada
+        if (! $siswa) {
             abort(404);
         }
+        // dd($siswa); //untuk cek data
         return view('siswa.show', compact('siswa'));
     }
 
@@ -36,53 +41,60 @@ class MyController extends Controller
     public function store(Request $request)
     {
         $siswa = session('siswa_data', $this->arr);
-        // membuat id increment otomatis
+
+        // membuat increment id otomatis
         $newId = collect($siswa)->max('id') + 1;
 
         // tambah data siswa
         $siswa[] = [
-            'id' => $newId,
+            'id'    => $newId,
             'kelas' => $request->kelas,
-            'nama' => $request->nama,
+            'nama'  => $request->nama,
         ];
 
-        // dd($request->all());
+        // dd($siswa);
 
         // simpan ke array siswa
         session(['siswa_data' => $siswa]);
 
-        // return
+        // kembali ke halaman siswa
         return redirect('/siswa');
     }
 
     public function edit($id)
     {
+        // ambil data siswa dari session
         $data = session('siswa_data', $this->arr);
-        // membuat id increment otomatis
+
+        // cari data berdasarkan id
         $siswa = collect($data)->firstWhere('id', $id);
 
-        if (!$siswa) {
+        //jika data tidak ada
+        if (! $siswa) {
             abort(404);
         }
-
-        // dd($siswa);
-
+        // dd($siswa); //untuk cek data
         return view('siswa.edit', compact('siswa'));
     }
 
     public function update(Request $request, $id)
     {
+        // mengambil data siswa dari session siswa_data
         $data = session('siswa_data', $this->arr);
 
+        // mencari data siswa berdasarkan id
         foreach ($data as &$item) {
             if ($item['id'] == $id) {
-                $item['nama'] = $request->nama;
+                // mengubah isi data nama dan kelas
+                $item['nama']  = $request->nama;
                 $item['kelas'] = $request->kelas;
                 break;
             }
         }
-        // dd($request->all());x    
+
+        // menyimpan data yang telah diupdate ke session
         session(['siswa_data' => $data]);
+
         return redirect('siswa');
     }
 
@@ -98,6 +110,8 @@ class MyController extends Controller
         // merefresh data di session
         session(['siswa_data' => $siswa]);
 
-        return redirect('/siswa');
+        return redirect('siswa');
+
     }
+
 }

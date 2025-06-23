@@ -8,12 +8,11 @@
 </head>
 
 <body>
-    <?php $nama = "Rafi"; ?>
-    @php $umur = 19; @endphp
-
-    nama saya &nbsp;
+    <?php $nama = "Faza"; ?>
+    @php $umur = 17; @endphp
+    Nama Saya &nbsp;
     <?php echo $nama; ?> <br>
-    umur saya {{ $umur }}
+    Umur Saya <strong>{{$umur}}</strong>
 </body>
 
 </html>
